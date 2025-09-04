@@ -3,15 +3,15 @@ import { useEffect } from "react";
 
 function RouteGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const isAuth = false;
+  const isAuth = false; // replace with your real auth check
 
   useEffect(() => {
     if (!isAuth) {
       router.replace("/auth");
     }
-  });
+  }, [isAuth]);
 
-  return <Stack />;
+  return <>{children}</>;
 }
 
 export default function RootLayout() {
