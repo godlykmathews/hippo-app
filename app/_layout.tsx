@@ -3,13 +3,13 @@ import { useEffect } from "react";
 
 function RouteGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const isAuth = false; // replace with your real auth check
+  const isAuth = false;
 
   useEffect(() => {
     if (!isAuth) {
       router.replace("/auth");
     }
-  }, [isAuth]);
+  }, [isAuth, router]);
 
   return <>{children}</>;
 }
