@@ -1,44 +1,49 @@
+import { AuthProvider, useAuth } from "@/lib/auth-context";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
 
-function useProtectedRoute(isAuth: boolean) {
+function useProtectedRoute() {
+  const { user, isLoadingUser } = useAuth();
   const segments = useSegments();
   const router = useRouter();
   const [isNavigationReady, setIsNavigationReady] = useState(false);
 
   useEffect(() => {
-    // Wait for navigation to be ready
     const timer = setTimeout(() => {
       setIsNavigationReady(true);
-    }, 0);
+    }, 100); // Increase delay to 100ms
 
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    if (!isNavigationReady) return;
+    if (!isNavigationReady || isLoadingUser) return;
 
     const inAuthGroup = segments[0] === "auth";
 
-    if (!isAuth && !inAuthGroup) {
-      // Redirect to auth if not authenticated and not in auth group
+    if (!user && !inAuthGroup) {
       router.replace("/auth");
-    } else if (isAuth && inAuthGroup) {
-      // Redirect to home if authenticated and in auth group
+    } else if (user && inAuthGroup) {
       router.replace("/(tabs)");
     }
-  }, [isAuth, segments, router, isNavigationReady]);
+  }, [user, segments, router, isNavigationReady, isLoadingUser]);
 }
 
-export default function RootLayout() {
-  const isAuth = false;
-
-  useProtectedRoute(isAuth);
+function RootLayoutNav() {
+  useProtectedRoute();
 
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="auth" options={{ headerShown: false }} />
     </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
   );
 }
