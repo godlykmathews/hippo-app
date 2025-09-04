@@ -18,8 +18,6 @@ export default function RootLayout() {
           },
         }}
       />
-
-      <Tabs.Screen name="Login" options={{ title: "Login" }} />
     </Tabs>
   );
 }
